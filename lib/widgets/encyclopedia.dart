@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pokeapp/models/pokemon.dart';
+import 'package:pokeapp/services/pokemon_get.dart';
+import 'pokemon_card.dart';
 
-class Pokemon {
+/*class Pokemon {
+  String number;
   String name;
   List<String> abilities;
   String type;
   String image;
 
   Pokemon({
+    required this.number,
     required this.name,
     required this.abilities,
     required this.type,
@@ -16,6 +21,7 @@ class Pokemon {
 
 List<Pokemon> pokemonList = [
   Pokemon(
+    number: '1',
     name: 'Pikachu',
     abilities: ['Static', 'Lightning Rod'],
     type: 'Electric',
@@ -23,6 +29,7 @@ List<Pokemon> pokemonList = [
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png',
   ),
   Pokemon(
+    number: '2',
     name: 'Charizard',
     abilities: ['Blaze', 'Solar Power'],
     type: 'Fire',
@@ -30,6 +37,7 @@ List<Pokemon> pokemonList = [
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
   ),
   Pokemon(
+    number: '2',
     name: 'Charizard',
     abilities: ['Blaze', 'Solar Power'],
     type: 'Fire',
@@ -37,6 +45,7 @@ List<Pokemon> pokemonList = [
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
   ),
   Pokemon(
+    number: '2',
     name: 'Charizard',
     abilities: ['Blaze', 'Solar Power'],
     type: 'Fire',
@@ -44,6 +53,7 @@ List<Pokemon> pokemonList = [
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
   ),
   Pokemon(
+    number: '2',
     name: 'Charizard',
     abilities: ['Blaze', 'Solar Power'],
     type: 'Fire',
@@ -51,6 +61,7 @@ List<Pokemon> pokemonList = [
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
   ),
   Pokemon(
+    number: '2',
     name: 'Charizard',
     abilities: ['Blaze', 'Solar Power'],
     type: 'Fire',
@@ -58,9 +69,62 @@ List<Pokemon> pokemonList = [
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
   ),
   // Add more Pokemon here
-];
+];*/
 
-class Encyclopedia extends StatelessWidget {
+class Encyclopedia extends StatefulWidget {
+  @override
+  State<Encyclopedia> createState() => _EncyclopediaState();
+}
+
+class _EncyclopediaState extends State<Encyclopedia> {
+  final ScrollController _scrollController = ScrollController();
+  final List<Pokemon> _pokemonList = [];
+  final PokemonGet _getPoke =
+      PokemonGet(baseUrl: 'https://pokeapi.co/api/v2/pokemon');
+  bool _isLoading = false;
+  bool _hasMore = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMorePokemons();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        bool isTop = _scrollController.position.pixels == 0;
+        if (!isTop && _hasMore && !_isLoading) {
+          _loadMorePokemons();
+        }
+      }
+    });
+  }
+
+  Future<void> _loadMorePokemons() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      List<Pokemon> newPokemons = await _getPoke.fetchPokemons();
+      setState(() {
+        _pokemonList.addAll(newPokemons);
+        _hasMore = newPokemons.isNotEmpty;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  //!TO DO: Ver que hace el dispose
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -70,15 +134,20 @@ class Encyclopedia extends StatelessWidget {
             int crossAxisCount = (constraints.maxWidth / 200).floor();
 
             return GridView.builder(
+              controller: _scrollController,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: pokemonList.length,
+              itemCount: _pokemonList.length + (_hasMore ? 1 : 0),
               itemBuilder: (context, index) {
-                final pokemon = pokemonList[index];
-                return HoverCard(pokemon: pokemon);
+                if (index < _pokemonList.length) {                  
+                  final pokemon = _pokemonList[index];
+                  return HoverCard(pokemon: pokemon);
+                } else {
+                  return Center(child: CircularProgressIndicator());                 
+                }
               },
             );
           },
@@ -86,68 +155,3 @@ class Encyclopedia extends StatelessWidget {
   }
 }
 
-class HoverCard extends StatefulWidget {
-  const HoverCard({
-    super.key,
-    required this.pokemon,
-  });
-
-  final Pokemon pokemon;
-
-  @override
-  State<HoverCard> createState() => _HoverCardState();
-}
-
-class _HoverCardState extends State<HoverCard> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        transform: _isHovered ? (Matrix4.identity()..scale(1.0, 1.04)) : Matrix4.identity(),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: _isHovered ?Theme.of(context).colorScheme.primary : Colors.transparent,
-            width: 5,
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Card(
-          margin: EdgeInsets.zero,
-          elevation: 5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Image.network(
-                  widget.pokemon.image,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                widget.pokemon.name,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5),
-              Text('Type: ${widget.pokemon.type}'),
-              SizedBox(height: 5),
-              Text('Abilities: ${widget.pokemon.abilities.join(', ')}'),
-              SizedBox(height: 5),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

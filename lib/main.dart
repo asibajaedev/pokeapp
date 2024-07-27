@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import the necessary package
-import 'encyclopedia.dart';
+import 'widgets/encyclopedia.dart';
 
 void main() {
   runApp(const MyApp());
@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Row(
         children: [
-          SafeArea(
+          /*SafeArea(
             child: NavigationRail(
               selectedIndex: selectedIndex,
               onDestinationSelected: (int index) {
@@ -81,10 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),          
               ],  
             )
-          ),
+          ),*/
           Expanded(
             child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.secondaryContainer,
                 child: page,
               ),
           ),

@@ -16,9 +16,4 @@ class Pokemon {
       image: json['sprites']['front_default'] ?? '',
     );
   }
-
-  static List<Pokemon> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Pokemon.fromJson(json)).toList();
-  }
-
 }

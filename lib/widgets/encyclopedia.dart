@@ -83,6 +83,7 @@ class _EncyclopediaState extends State<Encyclopedia> {
       PokemonGet(baseUrl: 'https://pokeapi.co/api/v2/pokemon');
   bool _isLoading = false;
   bool _hasMore = true;
+  int _itemsPerPage = 0;
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _EncyclopediaState extends State<Encyclopedia> {
     });
 
     try {
-      List<Pokemon> newPokemons = await _getPoke.fetchPokemons();
+      List<Pokemon> newPokemons = await _getPoke.fetchPokemons(limitOverride: _itemsPerPage);
       setState(() {
         _pokemonList.addAll(newPokemons);
         _hasMore = newPokemons.isNotEmpty;
@@ -118,7 +119,6 @@ class _EncyclopediaState extends State<Encyclopedia> {
     }
   }
 
-  //!TO DO: Ver que hace el dispose
   @override
   void dispose() {
     _scrollController.dispose();
@@ -131,9 +131,10 @@ class _EncyclopediaState extends State<Encyclopedia> {
         padding: const EdgeInsets.all(20),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            int crossAxisCount = (constraints.maxWidth / 200).floor();
-
-            return GridView.builder(
+            int crossAxisCount = (constraints.maxWidth / 200).floor() + 1;            
+            int rowCount = (constraints.maxHeight / 200).floor() + 1;          
+            _itemsPerPage = crossAxisCount * rowCount;
+            return GridView.builder(              
               controller: _scrollController,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,

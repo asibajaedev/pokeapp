@@ -37,21 +37,22 @@ class _HoverCardState extends State<HoverCard> {
           ),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Card(
+        child: Card(          
           margin: EdgeInsets.zero,
           elevation: 5,
-          color: Theme.of(context).colorScheme.secondary,
-          child: Padding(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          child: Padding(            
             padding: const EdgeInsets.all(10.0),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   children: [
                     Image.asset(
                       'assets/pokeball.png',
-                      height: 25,
-                      width: 25,
+                      height: 17,
+                      width: 17,
                     ),
                     SizedBox(
                       width: 5,
@@ -62,8 +63,8 @@ class _HoverCardState extends State<HoverCard> {
                         '$pokemonNumber  \n${widget.pokemon.name}',
                         style: TextStyle(
                           fontFamily: 'CustomFont',
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 8,
+                          fontWeight: FontWeight.normal,
                         ),
                       ),
                     ),

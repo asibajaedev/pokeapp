@@ -13,8 +13,9 @@ class PokemonGet {
     this.limit = 20,
   });
 
-  Future <List<Pokemon>> fetchPokemons() async {
-    final response = await http.get(Uri.parse('$baseUrl?offset=$offset&limit=$limit'));
+  Future <List<Pokemon>> fetchPokemons({int? limitOverride}) async {
+    int currentLimit = limitOverride ?? limit;
+    final response = await http.get(Uri.parse('$baseUrl?offset=$offset&limit=$currentLimit'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
@@ -29,7 +30,7 @@ class PokemonGet {
         }
       }
 
-      offset += limit;
+      offset += currentLimit;
 
       return pokemons;
     } else {

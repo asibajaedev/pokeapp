@@ -10,7 +10,7 @@ class PokemonGet {
   PokemonGet({
     required this.baseUrl,
     this.offset = 0,
-    this.limit = 20,
+    this.limit = 0,
   });
 
   Future <List<Pokemon>> fetchPokemons({int? limitOverride}) async {

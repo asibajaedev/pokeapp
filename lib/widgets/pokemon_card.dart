@@ -21,7 +21,7 @@ class _HoverCardState extends State<HoverCard> {
   @override
   Widget build(BuildContext context) {
     var pokemonNumber = widget.pokemon.number.padLeft(3, '0');
-     
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -44,11 +44,15 @@ class _HoverCardState extends State<HoverCard> {
           onTap: () {
             widget.onSelectPokemon(widget.pokemon);
           },
-          child: Card(          
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(6.0), 
+            ),
             margin: EdgeInsets.zero,
             elevation: 5,
             color: Theme.of(context).colorScheme.secondaryContainer,
-            child: Padding(            
+            child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,

@@ -80,7 +80,7 @@ class _EncyclopediaState extends State<Encyclopedia> {
                 SafeArea(child: InformationPanel(width: constraints.maxWidth, pokemon: _pokemonSelected),), 
                 Divider(
                   color: Theme.of(context).colorScheme.secondary,
-                  thickness: 5,
+                  thickness: 5,              
                 ),
                 Expanded(
                   child: Container(
